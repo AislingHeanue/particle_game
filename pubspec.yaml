@@ -1,5 +1,5 @@
 name: particle_game
-description: "A new Flutter project."
+description: "Particle Simulation Game"
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,11 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flame: ^1.28.1
+  flutter_animate: ^4.5.2
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
