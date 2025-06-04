@@ -1,2 +1,2 @@
-export 'play_area.dart';
 export 'particle.dart';
+export 'gyroscope.dart';
