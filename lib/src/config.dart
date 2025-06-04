@@ -5,4 +5,6 @@ const epsilonParticle = 0.6;
 const collidingOverlapForce = 0.4;
 const separatingOverlapForce = 7;
 
+const correctPositionDuringCollision = false;
+
 const baseGravity = 300.0;

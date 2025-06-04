@@ -57,7 +57,7 @@ class Particle extends CircleComponent
         intersectionPoints.reduce((a, b) => a + b) /
         intersectionPoints.length.toDouble();
 
-    final overlap = max(
+    var overlap = max(
       0,
       radius - (position.distanceTo(averageIntersectionPoint)),
     );
@@ -68,10 +68,16 @@ class Particle extends CircleComponent
     final double epsilon;
     final v1Tangent = velocity - (normal * (v1Normal));
     final Vector2 v2Tangent;
+    if (correctPositionDuringCollision) {
+      position -= (normal * overlap.toDouble() / 2);
+    }
     if (other is Particle) {
       v2Normal = other.velocity.dot(normal);
       v2Tangent = other.velocity - (normal * (v2Normal));
       epsilon = epsilonParticle;
+      if (correctPositionDuringCollision) {
+        other.position += (normal * overlap.toDouble() / 2);
+      }
     } else {
       v2Normal = 0;
       v2Tangent = Vector2(0, 0);
