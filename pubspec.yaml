@@ -12,6 +12,7 @@ dependencies:
   flame: ^1.28.1
   flutter_animate: ^4.5.2
   provider: ^6.1.5
+  sprintf: ^7.0.0
   simple_sensor:
     git:
       url: https://github.com/AislingHeanue/simple_sensor.git

@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import '../config.dart';
 import '../particle_game.dart';
 import 'package:simple_sensor/simple_sensor.dart';
