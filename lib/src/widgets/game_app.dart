@@ -2,7 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../particle_game.dart';
+import '../core/particle_game.dart';
 
 class GlobalState extends ChangeNotifier {
   int selectedIndex = 0;

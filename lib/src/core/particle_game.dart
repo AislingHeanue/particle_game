@@ -7,7 +7,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import './config.dart';
-import 'components/components.dart';
+import '../components/components.dart';
 
 enum Screen { playing, settings }
 

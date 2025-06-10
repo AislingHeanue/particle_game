@@ -12,7 +12,7 @@ const balls = 9;
 
 // damping to make everything less springy
 const unconfinedPositionDamping = 0.9;
-const unconfinedVelocityDamping = 0.92; // prev: 0.87
+const unconfinedVelocityDamping = 0.9; // prev: 0.87
 const confinedVelocityDamping = 0.89; // prev: 84
 const overallVelocityDamping = 0.995;
 

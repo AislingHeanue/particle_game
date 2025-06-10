@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:simple_sensor/simple_sensor.dart';
 
-import '../config.dart';
-import '../particle_game.dart';
+import '../core/config.dart';
+import '../core/particle_game.dart';
 
 class Gyroscope extends Component with HasGameReference<ParticleGame> {
   @override
