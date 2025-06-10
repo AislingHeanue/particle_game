@@ -11,6 +11,21 @@ import 'components/components.dart';
 
 enum Screen { playing, settings }
 
+// TODO: tap modes: add particles, remove particles, attract particles
+//       slider to adjust ball size as they are added (must be clicked to open slider)
+//       gravity slider
+//       selection of continuous color palettes or constant colour.
+//       settings button opens a set of overlaid menus such as theses
+//       clear button
+//       random button
+//       pause/play button
+//
+// TODO: way later ideas:
+//       maps with walls and stuff
+//       allow user to draw and remove walls freehand
+//       accelerometer events to shake the screen to make the walls give an impulse or just
+//         to randomise speeds of all particles proportional to gravity.
+
 class ParticleGame extends FlameGame with HasCollisionDetection {
   ParticleGame() : super(children: [ScreenHitbox()]);
 
