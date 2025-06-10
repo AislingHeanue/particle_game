@@ -144,6 +144,7 @@ mixin CollidableCircleMixin on CircleComponent {
           (m1 + m2);
     } else {
       newV1Normal = -epsilon * v1Normal;
+      // print('$v1Normal to $newV1Normal');
     }
 
     velocity = v1Tangent + (normal * newV1Normal);

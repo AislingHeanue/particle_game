@@ -1,5 +1,5 @@
 // coefficient of restitution for particle-to-wall collisions.
-const epsilonWall = 0.5;
+const epsilonWall = 0.7;
 const epsilonParticle = 0.6;
 
 // max stable gravity, about 600.
