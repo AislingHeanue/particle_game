@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart';
 
 import './config.dart';
 import '../components/components.dart';
@@ -13,12 +11,11 @@ enum Screen { playing, settings }
 
 // TODO: tap modes: add particles, remove particles, attract particles
 //       slider to adjust ball size as they are added (must be clicked to open slider)
-//       gravity slider
 //       selection of continuous color palettes or constant colour.
-//       settings button opens a set of overlaid menus such as theses
-//       clear button
-//       random button
 //       pause/play button
+//       freeze all velocities button
+//       help button to replace the IconButtons with LabelButtons or whatever they're called
+//       (I really hope I can do this in MenuEntryButton)
 //
 // TODO: way later ideas:
 //       maps with walls and stuff
@@ -33,7 +30,11 @@ class ParticleGame extends FlameGame with HasCollisionDetection {
   double get height => size.y;
   final random = Random();
 
-  Vector2 gravity = Vector2(-80, 80);
+  double baseGravity = initialGravity.toDouble();
+  Vector2 currentGravity = Vector2(0, 0);
+
+  final Controller _controller = Controller();
+  Controller get controller => _controller;
 
   @override
   FutureOr<void> onLoad() {
@@ -43,28 +44,8 @@ class ParticleGame extends FlameGame with HasCollisionDetection {
 
     world.add(Gyroscope());
 
-    for (var i = -balls; i <= balls; i++) {
-      for (var j = -balls; j <= balls; j++) {
-        Color colour;
-        // if (j < -4 || j > 4) {
-        //   colour = Colors.lightBlue;
-        // } else if (j > -2 && j < 2) {
-        //   colour = Colors.white;
-        // } else {
-        //   colour = Colors.pink;
-        // }
-        colour = Colors.accents.random();
-        world.add(
-          Particle(
-            colour: colour,
-            radius: r.toDouble(), // [7.0, 8.0, 10.0, 20.0].random(),
-            position: Vector2(
-              size.x / 2 + (2 * r + 1) * i.toDouble(),
-              size.y / 2 + (2 * r + 1) * j.toDouble(),
-            ),
-          ),
-        );
-      }
-    }
+    world.add(_controller);
+
+    _controller.spawnParticles();
   }
 }

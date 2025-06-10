@@ -62,7 +62,7 @@ class Particle extends CircleComponent
   }
 
   void doMove(double dt) {
-    velocity += game.gravity * dt;
+    velocity += game.currentGravity * dt;
     position += velocity * dt;
   }
 

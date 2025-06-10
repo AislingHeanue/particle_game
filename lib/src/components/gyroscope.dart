@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:simple_sensor/simple_sensor.dart';
 
-import '../core/config.dart';
 import '../core/particle_game.dart';
 
 class Gyroscope extends Component with HasGameReference<ParticleGame> {
@@ -15,7 +14,7 @@ class Gyroscope extends Component with HasGameReference<ParticleGame> {
   }
 
   void onData(AbsoluteOrientationEvent event) {
-    game.gravity = eventToGravity(event, baseGravity.toDouble());
+    game.currentGravity = eventToGravity(event, game.baseGravity.toDouble());
   }
 
   // pitch goes from -pi to +pi, with 0 being the 'flat' level. +pi/2 is +y
