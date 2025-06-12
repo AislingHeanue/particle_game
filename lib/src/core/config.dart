@@ -6,9 +6,16 @@ const epsilonParticle = 0.6;
 const initialGravity = 600;
 
 // lowest size that doesn't break really easily, 8.5.
-const r = 9.7;
-// max stable amount: 10/11
-const balls = 5;
+const smallestParticleSize = 8;
+const largestParticleSize = 24;
+const initialParticleSize = 10;
+// max stable amount: 200ish
+const ballsPerRadius = 150;
+
+const eraserToolSize = 10;
+
+const attractorRadius = 120;
+const attractorStrength = 2000;
 
 // damping to make everything less springy
 const unconfinedPositionDamping = 0.9;
@@ -21,3 +28,5 @@ const overlapTolerancePerRadius = 0; // prev: 0.0004
 // make this any odd number. Even numbers are very weird about the
 // boundary cases (ie walls), which I don't even begin to understand.
 const resolvePenetrationIterations = 5;
+
+const maxParticles = 550;

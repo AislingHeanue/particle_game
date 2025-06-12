@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 
 import '../core/config.dart';
@@ -13,12 +15,24 @@ mixin CollidableCircleMixin on CircleComponent {
   Vector2 get velocity;
   set velocity(Vector2 velocity);
 
+  bool alive = true;
+
   List<Overlap> get overlaps {
     List<Overlap> overlaps = [];
-    for (var p in contacts) {
+    for (var p in [...contacts]) {
       final overlap = (radius + p.radius) - distance(p);
       final normal = (p.position - position).normalized();
       final relativeVelocity = p.velocity - velocity;
+      // this particle is not on this plane of existence any more.
+      if (!p.alive) {
+        contacts.remove(p);
+        continue;
+      }
+      // these particles are miles apart, stop considering them for contacts
+      if (overlap < -min(radius, p.radius)) {
+        contacts.remove(p);
+        continue;
+      }
       if (overlap > overlapTolerancePerRadius * (radius + p.radius)) {
         overlaps.add(
           Overlap(
