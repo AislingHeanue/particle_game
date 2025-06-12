@@ -1,4 +1,6 @@
 // coefficient of restitution for particle-to-wall collisions.
+import 'package:flutter/material.dart';
+
 const epsilonWall = 0.7;
 const epsilonParticle = 0.6;
 
@@ -30,3 +32,5 @@ const overlapTolerancePerRadius = 0; // prev: 0.0004
 const resolvePenetrationIterations = 5;
 
 const maxParticles = 550;
+
+const initialColour = Colors.purple;

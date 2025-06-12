@@ -21,7 +21,7 @@ class PopoutAnimation extends StatelessWidget {
   ) {
     return Tween<Offset>(
       begin: direction == Axis.vertical
-          ? Offset(0, -offset - 1)
+          ? Offset(0, offset)
           : Offset(-offset - 1, 0),
       end: Offset.zero,
     ).animate(

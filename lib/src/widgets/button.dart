@@ -7,14 +7,14 @@ class Button extends StatelessWidget {
   const Button({
     super.key,
     required this.onPressed,
-    required this.icon,
     required this.label,
     this.direction,
     bool? selected,
+    this.icon,
   }) : selected = selected ?? false;
 
   final VoidCallback? onPressed;
-  final Widget icon;
+  final Widget? icon;
   final String label;
   final Axis? direction;
   final bool selected;
@@ -44,15 +44,32 @@ class Button extends StatelessWidget {
           ),
         ),
       );
-    } else {
+    } else if (icon != null) {
       button = IconButton(
         onPressed: onPressed,
-        icon: icon,
+        icon: icon!,
         tooltip: label,
         iconSize: 24,
         style: IconButton.styleFrom(
           foregroundColor: menuState.buttonForegroundColour,
           backgroundColor: selected ? Colors.lightBlue[200] : Colors.white,
+        ),
+      );
+    } else {
+      button = Padding(
+        padding: const EdgeInsets.only(left: 3, right: 3),
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.only(left: 0, right: 0),
+              foregroundColor: menuState.buttonForegroundColour,
+              backgroundColor: selected ? Colors.lightBlue[200] : Colors.white,
+            ),
+            child: Text(label),
+          ),
         ),
       );
     }

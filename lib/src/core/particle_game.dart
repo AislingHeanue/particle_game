@@ -4,15 +4,13 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/image_composition.dart';
-import 'package:flutter/material.dart';
 
 import './config.dart';
 import '../components/components.dart';
 
 enum TapMode { create, destroy, attract }
 
-// TODO: colour palettes
+// TODO: can i make the web target use gyroscope (pretty please?)
 
 // TODO: way later ideas:
 //       maps with walls and stuff
@@ -33,7 +31,6 @@ class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
   final Controller _controller = Controller();
   Controller get controller => _controller;
 
-  int particleCount = 0;
   double particleSize = initialParticleSize.toDouble();
   double particleScanningExtraRadius = 0;
 
@@ -67,13 +64,7 @@ class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
           case TapMode.create:
             particleScanningExtraRadius = particleSize;
             if (world.componentsAtPoint(p).whereType<Particle>().isEmpty) {
-              controller.addParticle(
-                Particle(
-                  position: p,
-                  radius: particleSize,
-                  colour: Colors.accents.random(),
-                ),
-              );
+              controller.addParticle(particleSize, p);
             }
 
           case TapMode.destroy:

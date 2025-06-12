@@ -30,7 +30,7 @@ class GameAppState extends State<GameApp> {
           home: Scaffold(
             body: GameWidget(game: _game),
             floatingActionButtonLocation:
-                FloatingActionButtonLocation.miniStartTop,
+                FloatingActionButtonLocation.startFloat,
             floatingActionButton: ExpandableMenu(
               child: MainEntries(controller: controller),
               direction: Axis.vertical,

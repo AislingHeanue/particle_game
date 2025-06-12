@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +61,6 @@ class Particle extends CircleComponent
     return dx * dx + dy * dy <=
         (radius + game.particleScanningExtraRadius) *
             (radius + game.particleScanningExtraRadius);
-    // return position.distanceToSquared(point) <
-    //     (radius + game.particleSize * 10) * (radius + game.particleSize * 10);
   }
 
   @override

@@ -22,6 +22,13 @@ class MainEntries with HasEntries {
     return [
       Button(
         onPressed: () {
+          parentState.toggleTooltips();
+        },
+        icon: Icon(Icons.question_mark),
+        label: 'Show Help',
+      ),
+      Button(
+        onPressed: () {
           state.paused = !state.paused;
           if (state.paused) {
             controller.pause();
@@ -35,6 +42,21 @@ class MainEntries with HasEntries {
         },
         icon: state.playPauseIcon,
         label: state.playPauseLabel,
+      ),
+      Button(
+        onPressed: controller.spawnParticles,
+        icon: Icon(Icons.grain),
+        label: 'Create Particles',
+      ),
+      Button(
+        onPressed: controller.reset,
+        icon: Icon(Icons.close),
+        label: 'Clear Particles',
+      ),
+      Button(
+        onPressed: controller.freezeParticles,
+        icon: Icon(Icons.ac_unit), // snowflake
+        label: 'Freeze Particles',
       ),
       ChangeNotifierProvider(
         create: (context) => TapEntriesState(),
@@ -100,28 +122,6 @@ class MainEntries with HasEntries {
           ),
           // ),
         ],
-      ),
-      Button(
-        onPressed: controller.spawnParticles,
-        icon: Icon(Icons.grain),
-        label: 'Create Particles',
-      ),
-      Button(
-        onPressed: controller.reset,
-        icon: Icon(Icons.close),
-        label: 'Clear Particles',
-      ),
-      Button(
-        onPressed: controller.freezeParticles,
-        icon: Icon(Icons.ac_unit), // snowflake
-        label: 'Freeze Particles',
-      ),
-      Button(
-        onPressed: () {
-          parentState.toggleTooltips();
-        },
-        icon: Icon(Icons.question_mark),
-        label: 'Show Help',
       ),
     ];
   }
