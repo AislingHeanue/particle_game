@@ -10,13 +10,12 @@ import '../components/components.dart';
 
 enum TapMode { create, destroy, attract }
 
-// TODO: can i make the web target use gyroscope (pretty please?)
-
 // TODO: way later ideas:
 //       maps with walls and stuff
 //       allow user to draw and remove walls freehand
 //       accelerometer events to shake the screen to make the walls give an impulse or just
 //         to randomise speeds of all particles proportional to gravity.
+//       sounds? /meme
 
 class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
   ParticleGame() : super(children: [ScreenHitbox()]);
