@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:particle_game/src/widgets/entries/taps.dart';
 import 'package:particle_game/src/widgets/expandable_menu.dart';
 import 'package:provider/provider.dart';
@@ -88,8 +89,7 @@ class MainEntries with HasEntries {
             onPressed: () {
               state.gravityBarVisible = !state.gravityBarVisible;
             },
-            // storm, zoom_in, wifi_tethering, palette, touch_app
-            icon: Icon(Icons.keyboard_double_arrow_down),
+            icon: Icon(Symbols.weight),
             label: 'Gravity',
           ),
           GameSlider(
@@ -109,7 +109,7 @@ class MainEntries with HasEntries {
             onPressed: () {
               state.sizeBarVisible = !state.sizeBarVisible;
             },
-            icon: Icon(Icons.zoom_in_map),
+            icon: Icon(Icons.zoom_in),
             label: 'Particle Size',
           ),
           GameSlider(

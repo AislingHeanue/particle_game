@@ -21,7 +21,7 @@ class TapsEntries with HasEntries {
           controller.setTapMode(TapMode.create);
         },
         icon: Icon(Symbols.stylus),
-        label: 'Clear Particles',
+        label: 'Create Particles',
         selected: state.selected == 0,
       ),
 
@@ -31,7 +31,7 @@ class TapsEntries with HasEntries {
           controller.setTapMode(TapMode.destroy);
         },
         icon: Icon(Symbols.ink_eraser),
-        label: 'Clear Particles',
+        label: 'Delete Particles',
         selected: state.selected == 1,
       ),
 
@@ -40,8 +40,8 @@ class TapsEntries with HasEntries {
           state.selected = 2;
           controller.setTapMode(TapMode.attract);
         },
-        icon: Icon(Icons.cyclone),
-        label: 'Clear Particles',
+        icon: Icon(Symbols.orbit),
+        label: 'Attract Particles',
         selected: state.selected == 2,
       ),
     ];

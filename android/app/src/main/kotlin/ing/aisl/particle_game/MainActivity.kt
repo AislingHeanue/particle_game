@@ -1,4 +1,4 @@
-package com.example.particle_game
+package ing.aisl.particle_game
 
 import io.flutter.embedding.android.FlutterActivity
 
