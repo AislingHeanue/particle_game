@@ -42,7 +42,6 @@ class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
   @override
   FutureOr<void> onLoad() {
     super.onLoad();
-    camera = CameraComponent.withFixedResolution(width: size.x, height: size.y);
     camera.viewfinder.anchor = Anchor.topLeft;
 
     world.add(Gyroscope());
