@@ -59,7 +59,7 @@ class Controller extends Component with HasGameReference<ParticleGame> {
   }
 
   void changeGravity(double gravityIn) {
-    game.baseGravity = initialGravity * gravityIn;
+    game.baseGravity = minGravity * (1 - gravityIn) + maxGravity * gravityIn;
   }
 
   void changeParticleSize(double particleSizeIn) {

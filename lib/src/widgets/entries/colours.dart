@@ -54,6 +54,8 @@ class ColoursEntries with HasEntries {
       ),
       Button(
         onPressed: () {
+          final previousSelected = state.selected;
+          bool colourPicked = false;
           state.selected = 3;
           showDialog(
             context: context,
@@ -74,12 +76,17 @@ class ColoursEntries with HasEntries {
                       onColorChanged: (v) {
                         state.selectedColour = v;
                         controller.setColour(v);
+                        colourPicked = true;
                         Navigator.pop(context);
                       },
                     ),
                   ),
                 ),
               );
+            },
+          ).then(
+            (v) => {
+              if (!colourPicked) {state.selected = previousSelected},
             },
           );
         },

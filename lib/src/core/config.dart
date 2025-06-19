@@ -5,7 +5,9 @@ const epsilonWall = 0.7;
 const epsilonParticle = 0.6;
 
 // max stable gravity, about 600.
+const minGravity = 0;
 const initialGravity = 600;
+const maxGravity = 900;
 
 // lowest size that doesn't break really easily, 8.5.
 const smallestParticleSize = 8;
@@ -31,6 +33,6 @@ const overlapTolerancePerRadius = 0; // prev: 0.0004
 // boundary cases (ie walls), which I don't even begin to understand.
 const resolvePenetrationIterations = 5;
 
-const maxParticles = 550;
+const maxParticles = 500;
 
 const initialColour = Colors.purple;

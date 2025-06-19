@@ -142,7 +142,7 @@ class MainEntriesState extends ChangeNotifier {
     notifyListeners();
   }
 
-  double _gravity = 1;
+  double _gravity = (initialGravity - minGravity) / (maxGravity - minGravity);
   double get gravity => _gravity;
   set gravity(double value) {
     _gravity = value;
