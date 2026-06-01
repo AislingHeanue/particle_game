@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:particle_game/src/simulator/particle.dart';
+import 'package:particle_game/src/simulator/particle_system.dart';
 
 import './config.dart';
 import '../components/components.dart';
@@ -17,7 +19,11 @@ enum TapMode { create, destroy, attract }
 //         to randomise speeds of all particles proportional to gravity.
 //       sounds? /meme
 
-class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
+double distance(Vector2 p1, Vector2 p2) {
+  return sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2));
+}
+
+class ParticleGame extends FlameGame with DragCallbacks {
   ParticleGame() : super(children: [ScreenHitbox()]);
 
   double get width => size.x;
@@ -29,6 +35,9 @@ class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
 
   final Controller _controller = Controller();
   Controller get controller => _controller;
+
+  final ParticleSystem _system = ParticleSystem();
+  ParticleSystem get system => _system;
 
   double particleSize = initialParticleSize.toDouble();
   double particleScanningExtraRadius = 0;
@@ -48,6 +57,10 @@ class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
 
     world.add(_controller);
 
+    world.add(ParticleRenderer());
+
+    world.add(_system);
+
     _controller.spawnParticles();
   }
 
@@ -61,14 +74,20 @@ class ParticleGame extends FlameGame with HasCollisionDetection, DragCallbacks {
         switch (tapMode) {
           case TapMode.create:
             particleScanningExtraRadius = particleSize;
-            if (world.componentsAtPoint(p).whereType<Particle>().isEmpty) {
+            if (!system.particles.any((particle) {
+              return distance(particle.position, p) <
+                  2 * particleScanningExtraRadius;
+            })) {
               controller.addParticle(particleSize, p);
             }
 
           case TapMode.destroy:
             particleScanningExtraRadius = eraserToolSize.toDouble();
-            for (var p in world.componentsAtPoint(p).whereType<Particle>()) {
-              controller.destroyParticle(p);
+            for (Particle particle in system.particles.where((particle) {
+              return distance(particle.position, p) <
+                  particleScanningExtraRadius;
+            })) {
+              controller.destroyParticle(particle);
             }
           default:
             break;

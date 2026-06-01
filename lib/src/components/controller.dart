@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:particle_game/src/components/particle.dart';
+import 'package:particle_game/src/simulator/particle.dart';
 
 import '../core/config.dart';
 import '../core/particle_game.dart';
@@ -34,9 +34,7 @@ class Controller extends Component with HasGameReference<ParticleGame> {
 
   void reset() {
     doUnpaused(() {
-      game.world.removeWhere((c) {
-        return c is Particle;
-      });
+      game.system.particles = [];
     });
     particleCount = 0;
   }
@@ -76,7 +74,7 @@ class Controller extends Component with HasGameReference<ParticleGame> {
         ColourSelectionMode.single => particleColour,
       };
       doUnpaused(() {
-        game.world.add(
+        game.system.particles.add(
           Particle(position: position, radius: radius, colour: colour),
         );
       });
@@ -86,9 +84,6 @@ class Controller extends Component with HasGameReference<ParticleGame> {
 
   void destroyParticle(Particle p) {
     p.alive = false;
-    doUnpaused(() {
-      game.world.remove(p);
-    });
     particleCount--;
   }
 
@@ -101,8 +96,7 @@ class Controller extends Component with HasGameReference<ParticleGame> {
   }
 
   void freezeParticles() {
-    var particles = game.world.children.whereType<Particle>();
-    for (var p in particles) {
+    for (var p in game.system.particles) {
       p.velocity = Vector2(0, 0);
     }
   }

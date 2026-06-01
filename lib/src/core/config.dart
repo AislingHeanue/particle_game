@@ -33,6 +33,6 @@ const overlapTolerancePerRadius = 0; // prev: 0.0004
 // boundary cases (ie walls), which I don't even begin to understand.
 const resolvePenetrationIterations = 5;
 
-const maxParticles = 500;
+const maxParticles = 5000;
 
 const initialColour = Colors.purple;
