@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:particle_game/src/simulator/overlap.dart';
 import 'package:particle_game/src/simulator/particle.dart';
 
@@ -32,105 +33,182 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
     // MOVEMENT (NO COLLISIONS)
     for (Particle p in particles) {
       p.position += p.velocity * dt;
+      p.positionBeforeCorrection = p.position;
+    }
+
+    for (Particle p in particles) {}
+    // COLLISIONS!
+    for (int i = 0; i < impulseLoops; i++) {
+      particles.shuffle();
+      for (Particle p in particles) {
+        p.overlaps = [];
+        updateOverlaps(p);
+        for (Overlap o in p.overlaps) {
+          if (!o.colliding()) {
+            continue;
+          }
+          final impulse = o.impulse();
+          p.velocity += o.normal.scaled(impulse / p.mass);
+          o.other!.velocity -= o.normal.scaled(impulse / o.other!.mass);
+        }
+        p.wallOverlaps = [];
+        updateWallOverlaps(p);
+        for (Overlap o in p.wallOverlaps) {
+          if (!o.colliding()) {
+            continue;
+          }
+          p.velocity += o.normal.scaled(o.impulse() / p.mass);
+        }
+      }
     }
 
     // GET REMAINING OVERLAPS AND APPLY SPATIAL CORRECTION
-    for (int i = 0; i < particles.length; i++) {
-      applyCorrection(i);
+    for (int i = 0; i < correctionLoops; i++) {
+      particles.shuffle();
+      for (Particle p in particles) {
+        applyCorrection(p);
+        applyFallbackCorrections(p);
+      }
+    }
+    for (Particle p in particles) {
+      p.velocity *= overallVelocityDamping.toDouble();
+    }
+    for (Particle p in particles) {
+      p.colour = Color.fromRGBO(
+        p.velocity[0].toInt() + 128,
+        p.velocity[1].toInt() + 128,
+        255,
+        1,
+      );
     }
   }
 
-  void updateOverlaps(int index) {
-    Particle p = particles[index];
-    p.overlaps = [];
-
+  void updateWallOverlaps(Particle p) {
     var wallEffectiveRadius = p.radius;
     if (p.y + wallEffectiveRadius > game.height) {
-      p.overlaps.add(
+      p.wallOverlaps.add(
         Overlap(
           // this hack ensures particles are pulled out of the wall on the first correction iteration, because otherwise
           // they have a tendency to slowly sink into the wall.
-          normal: Vector2(0, 1 / unconfinedPositionDamping),
-          amount: p.y + p.radius - game.height,
-          relativeVelocity: -p.velocity,
+          p: p,
+          normal: Vector2(0, -1),
+          amount: -(p.y + p.radius - game.height),
+          isWall: true,
         ),
       );
     }
     if (p.y - wallEffectiveRadius < 0) {
-      p.overlaps.add(
+      p.wallOverlaps.add(
         Overlap(
-          normal: Vector2(0, -1 / unconfinedPositionDamping),
-          amount: -(p.y - p.radius),
-          relativeVelocity: -p.velocity,
+          p: p,
+          normal: Vector2(0, 1),
+          amount: (p.y - p.radius),
+          isWall: true,
         ),
       );
     }
     if (p.x + wallEffectiveRadius > game.width) {
-      p.overlaps.add(
+      p.wallOverlaps.add(
         Overlap(
-          normal: Vector2(1 / unconfinedPositionDamping, 0),
-          amount: p.x + wallEffectiveRadius - game.width,
-          relativeVelocity: -p.velocity,
+          p: p,
+          normal: Vector2(-1, 0),
+          amount: -(p.x + wallEffectiveRadius - game.width),
+          isWall: true,
         ),
       );
     }
     if (p.x - wallEffectiveRadius < 0) {
-      p.overlaps.add(
+      p.wallOverlaps.add(
         Overlap(
-          normal: Vector2(-1 / unconfinedPositionDamping, 0),
-          amount: -(p.x - p.radius),
-          relativeVelocity: -p.velocity,
+          p: p,
+          normal: Vector2(1, 0),
+          amount: (p.x - p.radius),
+          isWall: true,
         ),
       );
     }
+  }
 
+  void updateOverlaps(Particle p) {
     for (var j = 0; j < particles.length; j++) {
       Particle p2 = particles[j];
       double d = distance(p.position, p2.position);
-      if (j == index || d > p.radius + p2.radius) {
-        // not colliding (TODO: use a grid to optimize this checking)
+      if (p == p2 || d > p.radius + p2.radius + 0.01) {
+        // not colliding
         continue;
       }
+      p.overlaps.add(
+        Overlap(
+          p: p,
+          normal: (p.position - p2.position).normalized(),
+          amount: d - (p.radius + p2.radius),
+          other: p2,
+          isWall: false,
+        ),
+      );
     }
   }
 
-  void applyCorrection(int index) {
-    Particle p = particles[index];
-    final positionBeforeCorrection = p.position;
+  void applyCorrection(Particle p) {
     // preform a couple iterations of a method to make sure that particles
     // are never intersecting and never moving towards one another if they
     // are currently colliding.
     for (var i = 0; i < resolvePenetrationIterations; i++) {
-      updateOverlaps(index);
-      // if the particle is not overlapping with anything, move on
-      if (p.overlaps.isEmpty) {
+      if (p.overlaps.isEmpty && p.wallOverlaps.isEmpty) {
         break;
       }
-      for (var o in p.overlaps) {
-        // move this particle away from any particle it is intersecting
-        particles[index].position -=
-            o.normal * o.amount * unconfinedPositionDamping.toDouble();
-        // if AND ONLY IF the particles are moving towards each other,
-        // then set this particle's velocity so that it doesn't do that
-        // any more. This does not cover the resolution of the Actual
-        // collision, just any steps after that, such as particles
-        // resting on top of each other.
-        if (o.relativeVelocity != null &&
-            o.relativeVelocity!.dot(o.normal) <= 0) {
-          particles[index].velocity +=
-              o.normal *
-              o.relativeVelocity!.dot(o.normal) *
-              unconfinedVelocityDamping.toDouble();
-        }
+      unclip(p, false);
+    }
+  }
+
+  void applyFallbackCorrections(Particle p) {
+    p.wallOverlaps = [];
+    updateWallOverlaps(p);
+    // particle is still overlapping, position correction has failed, only guarantee
+    // it hasn't fallen through a wall. This fallback case should produce a 'wave' effect.
+    if (p.wallOverlaps.isNotEmpty) {
+      p.position = p.positionBeforeCorrection;
+      p.velocity *= confinedVelocityDamping.toDouble();
+      unclip(p, true);
+    }
+  }
+
+  void unclip(Particle p, bool onlyWalls) {
+    p.overlaps = [];
+    if (!onlyWalls) {
+      updateOverlaps(p);
+    }
+    // if the particle is not overlapping with anything, move on
+    for (var o in p.overlaps) {
+      if (o.amount > -0.1) continue;
+      double totalInverseMass = 1.0 / p.mass + 1.0 / o.other!.mass;
+      Vector2 correction =
+          o.normal * o.amount * unconfinedPositionDamping.toDouble();
+      // move this particle away from any particle it is intersecting
+      p.position -= correction * (1 / p.mass) / totalInverseMass;
+      o.other!.position += correction * (1 / o.other!.mass) / totalInverseMass;
+      // // if AND ONLY IF the particles are moving towards each other,
+      // // then set this particle's velocity so that it doesn't do that
+      // // any more. This does not cover the resolution of the Actual
+      // // collision, just any steps after that, such as particles
+      // // resting on top of each other.
+      if (o.colliding()) {
+        final rv = o.relativeVelocity()!.dot(o.normal);
+        p.velocity -= o.normal * rv * unconfinedVelocityDamping.toDouble();
+        o.other!.velocity +=
+            o.normal * rv * unconfinedVelocityDamping.toDouble();
       }
     }
-    // particle is still overlapping, position correction has failed, do nothing
-    // this is a fallback case, and will cause 'waves' of frozen particles to
-    // propagate through the system.
-    if (p.overlaps.isNotEmpty) {
-      particles[index].position = positionBeforeCorrection;
-      particles[index].velocity *= confinedVelocityDamping.toDouble();
+    p.wallOverlaps = [];
+    updateWallOverlaps(p);
+    for (var o in p.wallOverlaps) {
+      if (o.amount > 0) continue;
+      // move this particle away from any particle it is intersecting
+      p.position -= o.normal * o.amount;
+      // if (o.colliding()) {
+      //   final rv = p.velocity.dot(o.normal);
+      //   p.velocity -= o.normal * rv * unconfinedVelocityDamping.toDouble();
+      // }
     }
-    particles[index].velocity *= overallVelocityDamping.toDouble();
   }
 }

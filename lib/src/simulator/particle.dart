@@ -16,15 +16,18 @@ class Particle {
     required this.colour,
     Vector2? velocity,
   }) : velocity = velocity ?? Vector2(0, 0),
-       mass = radius * radius;
+       mass = radius * radius,
+       positionBeforeCorrection = position;
 
   Vector2 position;
+  Vector2 positionBeforeCorrection;
   Vector2 velocity;
   double mass;
   double radius;
   Color colour;
   bool alive = true;
   List<Overlap> overlaps = [];
+  List<Overlap> wallOverlaps = [];
 
   get x => radius + position[0];
   get y => radius + position[1];

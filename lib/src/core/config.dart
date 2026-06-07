@@ -22,16 +22,19 @@ const attractorRadius = 120;
 const attractorStrength = 2000;
 
 // damping to make everything less springy
-const unconfinedPositionDamping = 0.9;
+const unconfinedPositionDamping = 0.99;
 const unconfinedVelocityDamping = 0.9; // prev: 0.87
-const confinedVelocityDamping = 0.89; // prev: 84
-const overallVelocityDamping = 0.995;
+const confinedVelocityDamping = 0.9; // prev: 84
+const overallVelocityDamping = 0.995; // 0.995;
 
-const overlapTolerancePerRadius = 0; // prev: 0.0004
+// const overlapTolerancePerRadius = 0; // prev: 0.0004
 
 // make this any odd number. Even numbers are very weird about the
 // boundary cases (ie walls), which I don't even begin to understand.
-const resolvePenetrationIterations = 5;
+const resolvePenetrationIterations = 1;
+
+const correctionLoops = 7;
+const impulseLoops = 7;
 
 const maxParticles = 5000;
 
