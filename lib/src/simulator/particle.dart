@@ -28,6 +28,7 @@ class Particle {
   bool alive = true;
   List<Overlap> overlaps = [];
   List<Overlap> wallOverlaps = [];
+  Set<Vector2> gridTiles = {};
 
   get x => radius + position[0];
   get y => radius + position[1];

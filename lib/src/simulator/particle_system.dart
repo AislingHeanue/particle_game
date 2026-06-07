@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+
 import 'package:particle_game/src/simulator/overlap.dart';
 import 'package:particle_game/src/simulator/particle.dart';
 
@@ -39,7 +40,7 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
     for (Particle p in particles) {}
     // COLLISIONS!
     for (int i = 0; i < impulseLoops; i++) {
-      particles.shuffle();
+      // particles.shuffle();
       for (Particle p in particles) {
         p.overlaps = [];
         updateOverlaps(p);
@@ -64,10 +65,10 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
 
     // GET REMAINING OVERLAPS AND APPLY SPATIAL CORRECTION
     for (int i = 0; i < correctionLoops; i++) {
-      particles.shuffle();
+      // particles.shuffle();
       for (Particle p in particles) {
         applyCorrection(p);
-        applyFallbackCorrections(p);
+        // applyFallbackCorrections(p);
       }
     }
     for (Particle p in particles) {
@@ -133,7 +134,7 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
     for (var j = 0; j < particles.length; j++) {
       Particle p2 = particles[j];
       double d = distance(p.position, p2.position);
-      if (p == p2 || d > p.radius + p2.radius + 0.01) {
+      if (p == p2 || d > p.radius + p2.radius) {
         // not colliding
         continue;
       }
@@ -184,9 +185,15 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       // double totalInverseMass = 1.0 / p.mass + 1.0 / o.other!.mass;
       Vector2 correction =
           o.normal * o.amount * unconfinedPositionDamping.toDouble();
-      if (correction.dot(game.currentGravity) < 0) {
+      final dot = correction.normalized().dot(game.currentGravity.normalized());
+      const angleWiggleRoom = 0.1;
+      if (dot < angleWiggleRoom && dot > -angleWiggleRoom) {
+        correction /= 2;
+      }
+      if (dot < angleWiggleRoom) {
         o.other!.position += correction;
-      } else {
+      }
+      if (dot > -angleWiggleRoom) {
         p.position -= correction;
       }
       // move this particle away from any particle it is intersecting
@@ -197,10 +204,11 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       // // resting on top of each other.
       if (o.colliding()) {
         final rv = o.relativeVelocity()!.dot(o.normal);
-        if (correction.dot(game.currentGravity) < 0) {
+        if (dot < angleWiggleRoom) {
           o.other!.velocity +=
               o.normal * rv * unconfinedVelocityDamping.toDouble();
-        } else {
+        }
+        if (dot > -angleWiggleRoom) {
           p.velocity -= o.normal * rv * unconfinedVelocityDamping.toDouble();
         }
       }
