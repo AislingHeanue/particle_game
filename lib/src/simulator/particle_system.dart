@@ -9,6 +9,7 @@ import '../core/config.dart';
 
 class ParticleSystem extends Component with HasGameReference<ParticleGame> {
   List<Particle> particles = [];
+  Map<(int, int), List<Particle>> superGridBucket = {};
 
   @override
   void update(double dt) {
@@ -37,7 +38,38 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       p.positionBeforeCorrection = p.position;
     }
 
-    for (Particle p in particles) {}
+    // CATALOGUE PARTICLES BY GRID TILES THAT CONTAIN THEIR BOUNDING BOX
+
+    superGridBucket = {};
+    for (Particle p in particles) {
+      p.gridTiles = {};
+      final minX = p.x - p.radius - 0.1;
+      final minY = p.y - p.radius - 0.1;
+      final maxX = p.x + p.radius + 0.1;
+      final maxY = p.y + p.radius + 0.1;
+      for (var i = 0; i < gridX; i++) {
+        if (minX > game.width * (i + 1) / gridX) {
+          continue;
+        }
+        if (maxX < game.width * i / gridX) {
+          continue;
+        }
+        for (var j = 0; j < gridY; j++) {
+          if (minY > game.height * (j + 1) / gridY) {
+            continue;
+          }
+          if (maxY < game.height * j / gridY) {
+            continue;
+          }
+          if (!superGridBucket.containsKey((i, j))) {
+            superGridBucket[(i, j)] = [];
+          }
+          superGridBucket[(i, j)]!.add(p);
+          p.gridTiles.add((i, j));
+        }
+      }
+    }
+
     // COLLISIONS!
     for (int i = 0; i < impulseLoops; i++) {
       // particles.shuffle();
@@ -45,20 +77,20 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
         p.overlaps = [];
         updateOverlaps(p);
         for (Overlap o in p.overlaps) {
-          if (!o.colliding()) {
+          if (!o.colliding) {
             continue;
           }
-          final impulse = o.impulse();
+          final impulse = o.impulse;
           p.velocity += o.normal.scaled(impulse / p.mass);
           o.other!.velocity -= o.normal.scaled(impulse / o.other!.mass);
         }
         p.wallOverlaps = [];
         updateWallOverlaps(p);
         for (Overlap o in p.wallOverlaps) {
-          if (!o.colliding()) {
+          if (!o.colliding) {
             continue;
           }
-          p.velocity += o.normal.scaled(o.impulse() / p.mass);
+          p.velocity += o.normal.scaled(o.impulse / p.mass);
         }
       }
     }
@@ -131,8 +163,13 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
   }
 
   void updateOverlaps(Particle p) {
-    for (var j = 0; j < particles.length; j++) {
-      Particle p2 = particles[j];
+    final relevantParticles = p.gridTiles
+        .expand((a) {
+          return superGridBucket[a] ?? [];
+        })
+        .toSet()
+        .toList();
+    for (Particle p2 in relevantParticles) {
       double d = distance(p.position, p2.position);
       if (p == p2 || d > p.radius + p2.radius) {
         // not colliding
@@ -186,7 +223,6 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       Vector2 correction =
           o.normal * o.amount * unconfinedPositionDamping.toDouble();
       final dot = correction.normalized().dot(game.currentGravity.normalized());
-      const angleWiggleRoom = 0.1;
       if (dot < angleWiggleRoom && dot > -angleWiggleRoom) {
         correction /= 2;
       }
@@ -202,8 +238,8 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       // // any more. This does not cover the resolution of the Actual
       // // collision, just any steps after that, such as particles
       // // resting on top of each other.
-      if (o.colliding()) {
-        final rv = o.relativeVelocity()!.dot(o.normal);
+      if (o.colliding) {
+        final rv = o.relativeVelocity!.dot(o.normal);
         if (dot < angleWiggleRoom) {
           o.other!.velocity +=
               o.normal * rv * unconfinedVelocityDamping.toDouble();

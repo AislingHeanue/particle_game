@@ -16,7 +16,7 @@ class Overlap {
   Particle? other;
   bool isWall;
 
-  double impulse() {
+  double get impulse {
     if (isWall) {
       return -(1 + epsilonWall) * p.velocity.dot(normal) * p.mass;
     } else {
@@ -26,7 +26,7 @@ class Overlap {
     }
   }
 
-  bool colliding() {
+  bool get colliding {
     if (isWall) {
       return (p.velocity).dot(normal) < 0;
     } else {
@@ -34,7 +34,7 @@ class Overlap {
     }
   }
 
-  Vector2? relativeVelocity() {
+  Vector2? get relativeVelocity {
     return other != null ? p.velocity - other!.velocity : null;
   }
 }

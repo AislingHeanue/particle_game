@@ -39,3 +39,8 @@ const impulseLoops = 10;
 const maxParticles = 5000;
 
 const initialColour = Colors.purple;
+
+const angleWiggleRoom = 0.1;
+
+const gridX = 9;
+const gridY = 21;
