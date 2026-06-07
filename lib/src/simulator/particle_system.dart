@@ -181,12 +181,15 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
     // if the particle is not overlapping with anything, move on
     for (var o in p.overlaps) {
       if (o.amount > -0.1) continue;
-      double totalInverseMass = 1.0 / p.mass + 1.0 / o.other!.mass;
+      // double totalInverseMass = 1.0 / p.mass + 1.0 / o.other!.mass;
       Vector2 correction =
           o.normal * o.amount * unconfinedPositionDamping.toDouble();
+      if (correction.dot(game.currentGravity) < 0) {
+        o.other!.position += correction;
+      } else {
+        p.position -= correction;
+      }
       // move this particle away from any particle it is intersecting
-      p.position -= correction * (1 / p.mass) / totalInverseMass;
-      o.other!.position += correction * (1 / o.other!.mass) / totalInverseMass;
       // // if AND ONLY IF the particles are moving towards each other,
       // // then set this particle's velocity so that it doesn't do that
       // // any more. This does not cover the resolution of the Actual
@@ -194,9 +197,12 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       // // resting on top of each other.
       if (o.colliding()) {
         final rv = o.relativeVelocity()!.dot(o.normal);
-        p.velocity -= o.normal * rv * unconfinedVelocityDamping.toDouble();
-        o.other!.velocity +=
-            o.normal * rv * unconfinedVelocityDamping.toDouble();
+        if (correction.dot(game.currentGravity) < 0) {
+          o.other!.velocity +=
+              o.normal * rv * unconfinedVelocityDamping.toDouble();
+        } else {
+          p.velocity -= o.normal * rv * unconfinedVelocityDamping.toDouble();
+        }
       }
     }
     p.wallOverlaps = [];

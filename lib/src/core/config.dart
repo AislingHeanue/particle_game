@@ -22,7 +22,7 @@ const attractorRadius = 120;
 const attractorStrength = 2000;
 
 // damping to make everything less springy
-const unconfinedPositionDamping = 0.99;
+const unconfinedPositionDamping = 0.95;
 const unconfinedVelocityDamping = 0.9; // prev: 0.87
 const confinedVelocityDamping = 0.9; // prev: 84
 const overallVelocityDamping = 0.995; // 0.995;
