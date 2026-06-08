@@ -75,7 +75,7 @@ class ParticleGame extends FlameGame with DragCallbacks {
           case TapMode.create:
             particleScanningExtraRadius = particleSize;
             if (!system.particles.any((particle) {
-              return distance(particle.position, p) <
+              return distance(Vector2(particle.x, particle.y), p) <
                   2 * particleScanningExtraRadius;
             })) {
               controller.addParticle(particleSize, p);
@@ -84,7 +84,7 @@ class ParticleGame extends FlameGame with DragCallbacks {
           case TapMode.destroy:
             particleScanningExtraRadius = eraserToolSize.toDouble();
             for (Particle particle in system.particles.where((particle) {
-              return distance(particle.position, p) <
+              return distance(Vector2(particle.x, particle.y), p) <
                   particleScanningExtraRadius;
             })) {
               controller.destroyParticle(particle);

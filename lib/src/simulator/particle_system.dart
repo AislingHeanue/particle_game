@@ -170,7 +170,7 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
         .toSet()
         .toList();
     for (Particle p2 in relevantParticles) {
-      double d = distance(p.position, p2.position);
+      double d = distance(Vector2(p.x, p.y), Vector2(p2.x, p2.y));
       if (p == p2 || d > p.radius + p2.radius) {
         // not colliding
         continue;

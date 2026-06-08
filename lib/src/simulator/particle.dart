@@ -25,7 +25,6 @@ class Particle {
   double mass;
   double radius;
   Color colour;
-  bool alive = true;
   List<Overlap> overlaps = [];
   List<Overlap> wallOverlaps = [];
   Set<(int, int)> gridTiles = {};
