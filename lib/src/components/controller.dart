@@ -83,7 +83,7 @@ class Controller extends Component with HasGameReference<ParticleGame> {
   }
 
   void destroyParticle(Particle p) {
-    game.system.particles.remove(p);
+    game.system.particlesThatNeedToDie.add(p);
     particleCount--;
   }
 

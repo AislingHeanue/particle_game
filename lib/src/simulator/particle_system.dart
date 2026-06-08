@@ -9,11 +9,19 @@ import '../core/config.dart';
 
 class ParticleSystem extends Component with HasGameReference<ParticleGame> {
   List<Particle> particles = [];
+  List<Particle> particlesThatNeedToDie = [];
   Map<(int, int), List<Particle>> superGridBucket = {};
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    // HARVEST ALL THE PARTICLES THAT HAVE BEEN MARKED FOR DEATH
+    for (Particle p in particlesThatNeedToDie) {
+      particles.remove(p);
+    }
+    particlesThatNeedToDie = [];
+
     // GLOBAL GRAVITY APPLICATION
     for (Particle p in particles) {
       p.velocity += game.currentGravity * dt;
