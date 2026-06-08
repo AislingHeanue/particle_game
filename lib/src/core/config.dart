@@ -7,6 +7,7 @@ const epsilonParticle = 0.6;
 // max stable gravity, about 600.
 const minGravity = 0;
 const initialGravity = 600;
+const accelerometerSensitivity = 900;
 const maxGravity = 900;
 
 // lowest size that doesn't break really easily, 8.5.

@@ -32,6 +32,7 @@ class ParticleGame extends FlameGame with DragCallbacks {
 
   double baseGravity = initialGravity.toDouble();
   Vector2 currentGravity = Vector2(0, 0);
+  Vector2 currentAcceleration = Vector2(0, 0);
 
   final Controller _controller = Controller();
   Controller get controller => _controller;
@@ -53,7 +54,7 @@ class ParticleGame extends FlameGame with DragCallbacks {
     super.onLoad();
     camera.viewfinder.anchor = Anchor.topLeft;
 
-    world.add(Gyroscope());
+    world.add(Sensors());
 
     world.add(_controller);
 

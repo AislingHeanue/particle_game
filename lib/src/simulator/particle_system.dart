@@ -26,6 +26,8 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
     for (Particle p in particles) {
       p.velocity += game.currentGravity * dt;
     }
+    // print(game.currentGravity);
+    // print(game.currentAcceleration);
 
     // SINK GRAVITY APPLICATION
     for (Particle p in particles) {
@@ -93,7 +95,7 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
           o.other!.velocity -= o.normal.scaled(impulse / o.other!.mass);
         }
         p.wallOverlaps = [];
-        updateWallOverlaps(p);
+        updateWallOverlaps(p, false);
         for (Overlap o in p.wallOverlaps) {
           if (!o.colliding) {
             continue;
@@ -111,6 +113,16 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
         // applyFallbackCorrections(p);
       }
     }
+
+    // ACCELEROMETER APPLICATION — only to particles touching a wall
+    for (Particle p in particles) {
+      p.wallOverlaps = [];
+      updateWallOverlaps(p, true);
+      if (p.wallOverlaps.isNotEmpty) {
+        p.velocity += game.currentAcceleration * dt;
+      }
+    }
+
     for (Particle p in particles) {
       p.velocity *= overallVelocityDamping.toDouble();
     }
@@ -124,8 +136,8 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
     }
   }
 
-  void updateWallOverlaps(Particle p) {
-    var wallEffectiveRadius = p.radius;
+  void updateWallOverlaps(Particle p, bool loose) {
+    var wallEffectiveRadius = p.radius + (loose ? 1 : 0);
     if (p.y + wallEffectiveRadius > game.height) {
       p.wallOverlaps.add(
         Overlap(
@@ -209,7 +221,7 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
 
   void applyFallbackCorrections(Particle p) {
     p.wallOverlaps = [];
-    updateWallOverlaps(p);
+    updateWallOverlaps(p, false);
     // particle is still overlapping, position correction has failed, only guarantee
     // it hasn't fallen through a wall. This fallback case should produce a 'wave' effect.
     if (p.wallOverlaps.isNotEmpty) {
@@ -258,7 +270,7 @@ class ParticleSystem extends Component with HasGameReference<ParticleGame> {
       }
     }
     p.wallOverlaps = [];
-    updateWallOverlaps(p);
+    updateWallOverlaps(p, false);
     for (var o in p.wallOverlaps) {
       if (o.amount > 0) continue;
       // move this particle away from any particle it is intersecting
